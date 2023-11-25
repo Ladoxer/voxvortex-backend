@@ -73,6 +73,9 @@ export default class AuthController {
           message: 'Success'
         });
       }
+      return res.status(401).json({
+        message: 'Invalid Otp'
+      });
     } catch (error) {
       throw error;
       next(error);
@@ -111,7 +114,8 @@ export default class AuthController {
       }
 
       const token = generateAuthToken(userData);
-      return res.status(200).json(token);
+    
+      return res.status(200).json({token:token,userData:userData._id});
     } catch (error) {
       next(error);
     }
@@ -207,6 +211,38 @@ export default class AuthController {
       return res.status(200).json({
         message: 'Success'
       });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async adminLogin(req: Request, res: Response, next: NextFunction) {
+    try {
+      const {email, password} = req.body;
+
+      const adminData = await this.authRepository.findAdminByEmail(email);
+      if(!adminData){
+        return res.status(401).json({
+          message:'UnAutharised'
+        })
+      }
+      
+
+      console.log("adminData",adminData);
+      
+
+      const passwordMatch = await bcrypt.compare(password, adminData.password);
+      
+
+      if(!passwordMatch){
+        return res.status(401).json({
+          message:'Password is incorrect'
+        });
+      }
+
+      const token = generateAuthToken(adminData);
+      return res.status(200).json(token);
+
     } catch (error) {
       next(error);
     }

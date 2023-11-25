@@ -12,5 +12,6 @@ router.post('/forgotpassword', authController.forgotPassword.bind(authController
 router.post('/forgot/:token', authController.forgot.bind(authController));
 
 router.post('/active', authController.activeUser.bind(authController));
+router.post('/admin', authController.adminLogin.bind(authController));
 
 export default router;

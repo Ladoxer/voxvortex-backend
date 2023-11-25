@@ -15,7 +15,9 @@ interface IAuthRepository {
 
   updatePasswordById(id: string, password: string): Promise<void>;
 
-  // updateOtp(userid: string, otp: string): Promise<void>;
+  updateOtp(userid: string, otp: string): Promise<void>;
+
+  findAdminByEmail(email: string): Promise<IUser | null>;
 }
 
 export default class AuthRepository implements IAuthRepository {
@@ -25,6 +27,10 @@ export default class AuthRepository implements IAuthRepository {
 
   async findUserByEmail(email: string): Promise<IUser | null> {
     return await User.findOne({email}).exec();
+  }
+
+  async findAdminByEmail(email: string): Promise<IUser | null> {
+    return await User.findOne({email,is_admin:true});
   }
 
   async findById(userid: string): Promise<IUser | null> {
@@ -47,7 +53,7 @@ export default class AuthRepository implements IAuthRepository {
     await User.updateOne({_id:id},{$set:{ password: password }});
   }
 
-  static async updateOtp(userid: string, otp: string): Promise<void> {
+  async updateOtp(userid: string, otp: string): Promise<void> {
     await User.updateOne({_id:userid},{otp});
   }
 }

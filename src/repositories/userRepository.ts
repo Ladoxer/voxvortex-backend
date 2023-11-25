@@ -3,7 +3,7 @@ import User, {IUser} from "../models/User";
 export default class UserRepository {
   async getAllUsers(): Promise<IUser[]> {
     try {
-      const users = await User.find().exec();
+      const users = await User.find({is_admin:false}).exec();
       return users;
     } catch (error) {
       throw error;

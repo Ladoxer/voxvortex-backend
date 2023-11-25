@@ -9,6 +9,12 @@ export interface IUser extends Document {
   is_admin: boolean;
   is_blocked: boolean;
   otp: string;
+  following:[{
+    user: Schema.Types.ObjectId
+  }];
+  followers:[{
+    user: Schema.Types.ObjectId
+  }]
   token: string;
 }
 
@@ -21,6 +27,18 @@ const userSchema = new Schema<IUser>({
   is_admin: { type: Boolean, default: false },
   is_blocked: { type: Boolean, default: false },
   otp: { type: String, default: "" },
+  following: [{
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: 'User'
+    }
+  }],
+  followers: [{
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: 'User'
+    }
+  }],
   token: { type: String, default: "" },
 });
 
