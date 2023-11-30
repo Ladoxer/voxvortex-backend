@@ -17,6 +17,16 @@ export default class UserController {
     }
   }
 
+  async getUserById(req: Request, res: Response, next: NextFunction) {
+    try {
+      const userId: string = req.params.id;
+      const user = await this.userService.getUserById(userId);
+      res.status(200).json(user);
+    } catch (error) {
+      next(error); 
+    }
+  }
+
   async blockUser(req: Request, res: Response, next: NextFunction) {
     try {
       const userId = req.params.userId;
@@ -36,6 +46,36 @@ export default class UserController {
       return res.status(200).json({
         message: 'User unblocked'
       });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async toggleFollow(req: Request, res: Response, next: NextFunction) {
+    try {
+      const {userId, targetId } = req.body;
+      const isFollowing = await this.userService.toggleFollow(userId,targetId);
+      if(isFollowing){
+        return res.status(200).json({
+          message: 'followed successfully.'
+        })
+      }else{
+        return res.status(200).json({
+          message: 'unfollowed successfully.'
+        });
+      }
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getFollowings(req: Request, res: Response, next: NextFunction){
+    try {
+      const userId = req.params.id;
+      const followingUser = await this.userService.getFollowing(userId);
+
+      res.status(200).json(followingUser);
+
     } catch (error) {
       next(error);
     }

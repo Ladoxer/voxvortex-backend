@@ -16,6 +16,14 @@ export default class UserService {
     }
   }
 
+  async getUserById(userId: string): Promise<IUser | null> {
+    try {
+      return await this.userRepository.getUserById(userId);
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async blockUser(userId: string): Promise<void> {
     try {
       await this.userRepository.blockUser(userId);
@@ -27,6 +35,22 @@ export default class UserService {
   async unblockUser(userId: string): Promise<void> {
     try {
       await this.userRepository.unblockUser(userId);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async toggleFollow(userId: string, targetId: string): Promise<boolean> {
+    try {
+      return await this.userRepository.toggleFollow(userId,targetId);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getFollowing(userId: string){
+    try {
+      return await this.userRepository.getFollowings(userId);
     } catch (error) {
       throw error;
     }
