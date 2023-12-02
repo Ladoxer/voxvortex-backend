@@ -42,6 +42,7 @@ export default class ChatRepository implements IChatRepository {
       }
       return false;
     } catch (error) {
+      throw error;
       return false;
     }
   }

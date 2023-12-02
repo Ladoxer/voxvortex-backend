@@ -4,7 +4,7 @@ export interface IMessage extends Document{
   text: string;
   sender_id: Schema.Types.ObjectId;
   chat_id: Schema.Types.ObjectId;
-  time: Date;
+  time: string;
   createdAt: Date,
   updatedAt: Date
 }
@@ -24,7 +24,7 @@ const messageSchema = new Schema<IMessage>({
     ref: 'Chat'
   },
   time:{
-    type: Date,
+    type: String,
     required: true
   }
 },{timestamps:true});

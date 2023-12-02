@@ -1,5 +1,6 @@
 import { PopulatedDoc } from "mongoose";
 import User, {IUser} from "../models/User";
+import Blog from "../models/Blog";
 
 export default class UserRepository {
   async getAllUsers(): Promise<IUser[]> {
@@ -68,6 +69,34 @@ export default class UserRepository {
 
       return !isFollowing;
 
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async toggleSave(userId: string, blogId: string): Promise<boolean> {
+    try {
+      const user = await User.findById(userId).exec();
+      const blog = await Blog.findById(blogId).exec();
+      const blogExists = user?.saved.includes(blog?._id);
+
+      if (!user || !blog) {
+        throw new Error("User or blog not found");
+      }
+
+      if(blogExists) {
+        await User.updateOne(
+          {_id: userId},
+          {$pull: {saved:blogId}}
+        ).exec();
+      } else {
+        await User.updateOne(
+          {_id: userId},
+          {$addToSet: {saved: blogId}}
+        ).exec();
+      }
+
+      return !blogExists;
     } catch (error) {
       throw error;
     }
