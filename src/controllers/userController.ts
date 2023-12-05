@@ -69,6 +69,25 @@ export default class UserController {
     }
   }
 
+  async toggleSave(req: Request, res: Response, next: NextFunction) {
+    try {
+      const {userId, blogId} = req.body;
+      const isSaved = await this.userService.toggleSave(userId,blogId);
+
+      if(isSaved){
+        return res.status(200).json({
+          message: 'Blog saved successfully'
+        })
+      } else {
+        return res.status(200).json({
+          message: 'Blog removed from saved list'
+        })
+      }
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async getFollowings(req: Request, res: Response, next: NextFunction){
     try {
       const userId = req.params.id;
@@ -76,6 +95,18 @@ export default class UserController {
 
       res.status(200).json(followingUser);
 
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getSavedBlogs(req: Request, res: Response, next: NextFunction){
+    try {
+      const userId = req.params.id;
+      const savedBlogs = await this.userService.getSavedBlogs(userId);
+
+      res.status(200).json(savedBlogs);
+      
     } catch (error) {
       next(error);
     }

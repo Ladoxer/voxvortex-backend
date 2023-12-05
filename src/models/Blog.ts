@@ -10,7 +10,8 @@ export interface IBlog extends Document {
   like: number;
   comments: [{
     userName: Schema.Types.ObjectId,
-    text: string
+    text: string,
+    createdAt: Date
   }],
   createdAt: Date,
   updatedAt: Date
@@ -55,6 +56,10 @@ const blogSchema = new Schema<IBlog>({
     },
     text:{
       type: String,
+      required: true
+    },
+    createdAt:{
+      type: Date,
       required: true
     }
   }],

@@ -1,6 +1,6 @@
 import { PopulatedDoc } from "mongoose";
 import User, {IUser} from "../models/User";
-import Blog from "../models/Blog";
+import Blog, { IBlog } from "../models/Blog";
 
 export default class UserRepository {
   async getAllUsers(): Promise<IUser[]> {
@@ -107,6 +107,16 @@ export default class UserRepository {
       const user = await User.findById(userId).populate("following").exec();
       
       return user?.following as PopulatedDoc<IUser>[];
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getSavedBlogs(userId: string){
+    try {
+      const user = await User.findById(userId).populate("saved").exec();
+
+      return user?.saved as PopulatedDoc<IBlog>[];
     } catch (error) {
       throw error;
     }

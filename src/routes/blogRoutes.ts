@@ -10,5 +10,7 @@ blogRouter.get('/:id',blogController.getBlogById.bind(blogController));
 blogRouter.put('/:id',upload,blogController.updateBlog.bind(blogController));
 blogRouter.delete('/:id', blogController.deleteBlog.bind(blogController));
 blogRouter.get('/',blogController.getAllBlogs.bind(blogController));
+blogRouter.post('/comment/:id',blogController.addComment.bind(blogController));
+blogRouter.get('/comment/:id',blogController.getComments.bind(blogController));
 
 export default blogRouter;

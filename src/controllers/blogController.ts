@@ -8,6 +8,8 @@ interface IBlogContoller {
   updateBlog(req: Request, res: Response, next: NextFunction): Promise<any>;
   deleteBlog(req: Request, res: Response, next: NextFunction): Promise<any>;
   getAllBlogs(req: Request, res: Response, next: NextFunction): Promise<any>;
+  addComment(req: Request, res: Response, next: NextFunction): Promise<void>;
+  getComments(req: Request, res: Response, next: NextFunction): Promise<void>;
 }
 
 export default class BlogController implements IBlogContoller {
@@ -97,6 +99,30 @@ export default class BlogController implements IBlogContoller {
     try {
       const blogs = await this.blogService.getAllBlogs();
       res.status(200).json(blogs);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async addComment(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const blogId = req.params.id;
+      const {userName, text, createdAt} = req.body;
+      await this.blogService.addComment(blogId,{userName,text,createdAt});
+
+      res.status(200).json({
+        message:"Comment added"
+      })
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getComments(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const blogId = req.params.id;
+      const comments = await this.blogService.getComments(blogId);
+      res.status(200).json(comments);
     } catch (error) {
       next(error);
     }

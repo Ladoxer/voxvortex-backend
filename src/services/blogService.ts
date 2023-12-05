@@ -8,6 +8,8 @@ interface IBlogService {
   deleteBlog(blogId: string): Promise<boolean>;
   getAllBlogs(): Promise<IBlog[]>;
   updateUserBlog(userId: string, blogId: string): Promise<void>;
+  addComment(blogId: string, newComment: {userName: string, text: string, createdAt: Date}): Promise<void>;
+  getComments(blogId: string): Promise<any>;
 }
 
 export default class BlogService implements IBlogService {
@@ -49,6 +51,14 @@ export default class BlogService implements IBlogService {
 
   async getAllBlogs(): Promise<IBlog[]> {
     return await this.blogRepository.getAllBlogs();
+  }
+
+  async addComment(blogId: string, newComment: { userName: string; text: string; createdAt: Date; }): Promise<void> {
+    return await this.blogRepository.addComment(blogId, newComment);
+  }
+
+  async getComments(blogId: string): Promise<any> {
+    return await this.blogRepository.getComments(blogId);
   }
 
 }

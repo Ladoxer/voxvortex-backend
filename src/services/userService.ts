@@ -48,9 +48,25 @@ export default class UserService {
     }
   }
 
+  async toggleSave(userId: string, blogId: string): Promise<boolean>{
+    try {
+      return await this.userRepository.toggleSave(userId,blogId);
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async getFollowing(userId: string){
     try {
       return await this.userRepository.getFollowings(userId);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getSavedBlogs(userId: string){
+    try {
+      return await this.userRepository.getSavedBlogs(userId);
     } catch (error) {
       throw error;
     }

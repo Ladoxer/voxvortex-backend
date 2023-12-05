@@ -8,6 +8,8 @@ interface IBlogRepository{
   deleteBlog(blogId: string): Promise<boolean>;
   getAllBlogs(): Promise<IBlog[]>;
   updateUserBlog(userId: string, blogId: string): Promise<void>;
+  addComment(blogId: string, newComment: {userName: string, text: string, createdAt: Date}): Promise<void>;
+  getComments(blogId: string): Promise<any>;
 }
 
 export default class BlogRepository implements IBlogRepository{
@@ -58,6 +60,32 @@ export default class BlogRepository implements IBlogRepository{
       return await Blog.find({}).populate('userName').populate('label');
     } catch (error) {
       return [];
+    }
+  }
+
+  async addComment(blogId: string, newComment: { userName: string; text: string; createdAt: Date; }): Promise<void> {
+    try {
+      const {userName, text, createdAt} = newComment;
+
+      // const user = await User.findById(userName);
+
+      const blog = await Blog.findByIdAndUpdate(blogId,{$push:{comments:{userName,text,createdAt}}});
+      if(!blog) {
+        throw new Error('Comment not saved');
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getComments(blogId: string): Promise<any> {
+    try {
+      const blog = await Blog.findById(blogId).populate('comments.userName','name');
+      console.log(blog);
+      
+      return blog?.comments;
+    } catch (error) {
+      throw error;
     }
   }
 
