@@ -4,6 +4,7 @@ import BlogRepository from "../repositories/blogRepository";
 interface IBlogService {
   createBlog(newBlog: IBlog): Promise<IBlog | null>;
   getBlogById(blogId: string): Promise<IBlog | null>;
+  getBlogByLabelId(LabelId: string): Promise<IBlog[] | null>;
   updateBlog(blogId: string, updatedBlog: Partial<IBlog>): Promise<boolean>;
   deleteBlog(blogId: string): Promise<boolean>;
   getAllBlogs(): Promise<IBlog[]>;
@@ -39,6 +40,10 @@ export default class BlogService implements IBlogService {
 
   async getBlogById(blogId: string): Promise<IBlog | null> {
     return await this.blogRepository.getBlogById(blogId);
+  }
+
+  async getBlogByLabelId(LabelId: string): Promise<IBlog[] | null> {
+    return await this.blogRepository.getBlogByLabelId(LabelId);
   }
 
   async updateBlog(blogId: string, updatedBlog: Partial<IBlog>): Promise<boolean> {

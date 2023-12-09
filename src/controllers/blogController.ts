@@ -5,6 +5,7 @@ import { IBlog } from "../models/Blog";
 interface IBlogContoller {
   createBlog(req: Request, res: Response, next: NextFunction): Promise<any>;
   getBlogById(req: Request, res: Response, next: NextFunction): Promise<any>;
+  getBlogByLabelId(req: Request, res: Response, next: NextFunction): Promise<void>;
   updateBlog(req: Request, res: Response, next: NextFunction): Promise<any>;
   deleteBlog(req: Request, res: Response, next: NextFunction): Promise<any>;
   getAllBlogs(req: Request, res: Response, next: NextFunction): Promise<any>;
@@ -51,6 +52,16 @@ export default class BlogController implements IBlogContoller {
         return res.status(200).json(blog);
       }
       return res.status(404).json({ message: 'Blog not found' });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getBlogByLabelId(req: Request, res: Response, next: NextFunction): Promise<void>{
+    try {
+      const labelId = req.params.id;
+      const labeledBlog = await this.blogService.getBlogByLabelId(labelId);
+      res.status(200).json(labeledBlog);
     } catch (error) {
       next(error);
     }

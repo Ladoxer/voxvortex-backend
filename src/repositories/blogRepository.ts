@@ -4,6 +4,7 @@ import User from "../models/User";
 interface IBlogRepository{
   createBlog(newBlog: Partial<IBlog>): Promise<IBlog | null>;
   getBlogById(blogId: string): Promise<IBlog | null>;
+  getBlogByLabelId(LabelId: string): Promise<IBlog[] | null>;
   updateBlog(blogId: string, updatedBlog: Partial<IBlog>): Promise<boolean>;
   deleteBlog(blogId: string): Promise<boolean>;
   getAllBlogs(): Promise<IBlog[]>;
@@ -32,6 +33,14 @@ export default class BlogRepository implements IBlogRepository{
   async getBlogById(blogId: string): Promise<IBlog | null> {
     try {
       return await Blog.findById(blogId).populate('userName').populate('label');
+    } catch (error) {
+      return null;
+    }
+  }
+
+  async getBlogByLabelId(LabelId: string): Promise<IBlog[] | null> {
+    try {
+      return await Blog.find({label:LabelId}).populate('userName');
     } catch (error) {
       return null;
     }

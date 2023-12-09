@@ -6,6 +6,7 @@ import { ILabel } from "../models/Label";
 
 interface ILabelController {
   createLabel(req: Request, res: Response, next: NextFunction): Promise<void>;
+  getLabelById(req: Request, res: Response, next: NextFunction): Promise<void>;
   getAllLabels(req: Request, res: Response, next: NextFunction): Promise<void>;
   updateLabel(req: Request, res: Response, next: NextFunction): Promise<void>;
   deleteLabel(req: Request, res: Response, next: NextFunction): Promise<void>;
@@ -30,6 +31,16 @@ export default class LabelController implements ILabelController {
           message: 'Failed to create label'
         });
       }
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getLabelById(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const labelId = req.params.id;
+      const labelData = await this.labelService.getLabelById(labelId);
+      res.status(200).json(labelData);
     } catch (error) {
       next(error);
     }

@@ -2,6 +2,7 @@ import Label,{ ILabel } from "../models/Label";
 
 interface ILabelRepository {
   createLabel(newLabel: ILabel): Promise<ILabel | null>;
+  getLabelById(labelId: string): Promise<ILabel | null>;
   getAllLabels(): Promise<ILabel[]>;
   updateLabel(labelId: string, updatedLabel: Partial<ILabel>): Promise<ILabel | null>;
   deleteLabel(labelId: string): Promise<boolean>;
@@ -11,6 +12,14 @@ export default class LabelRepository implements ILabelRepository {
   async createLabel(newLabel: ILabel): Promise<ILabel | null> {
     try {
       return await Label.create(newLabel);
+    } catch (error) {
+      return null;
+    }
+  }
+
+  async getLabelById(labelId: string): Promise<ILabel | null> {
+    try {
+      return await Label.findById(labelId);
     } catch (error) {
       return null;
     }
