@@ -7,10 +7,11 @@ interface IBlogService {
   getBlogByLabelId(LabelId: string): Promise<IBlog[] | null>;
   updateBlog(blogId: string, updatedBlog: Partial<IBlog>): Promise<boolean>;
   deleteBlog(blogId: string): Promise<boolean>;
-  getAllBlogs(): Promise<IBlog[]>;
+  getAllBlogs(limit: number, offset: number): Promise<IBlog[]>;
   updateUserBlog(userId: string, blogId: string): Promise<void>;
   addComment(blogId: string, newComment: {userName: string, text: string, createdAt: Date}): Promise<void>;
   getComments(blogId: string): Promise<any>;
+  getFollowingBlogs(userId: string, limit: number, offset: number): Promise<IBlog[] | null>;
 }
 
 export default class BlogService implements IBlogService {
@@ -54,8 +55,12 @@ export default class BlogService implements IBlogService {
     return await this.blogRepository.deleteBlog(blogId);
   }
 
-  async getAllBlogs(): Promise<IBlog[]> {
-    return await this.blogRepository.getAllBlogs();
+  async getAllBlogs(limit: number, offset: number): Promise<IBlog[]> {
+    return await this.blogRepository.getAllBlogs(limit, offset);
+  }
+
+  async getFollowingBlogs(userId: string,limit: number, offset: number): Promise<IBlog[] | null> {
+    return await this.blogRepository.getFollowingBlogs(userId,limit,offset);
   }
 
   async addComment(blogId: string, newComment: { userName: string; text: string; createdAt: Date; }): Promise<void> {

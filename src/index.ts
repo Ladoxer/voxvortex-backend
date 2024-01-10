@@ -1,6 +1,5 @@
 import app from "./app";
 import ChatUtils from "./utils/chatUtils";
-import newMessage from "./utils/chatUtils";
 import dbConnect from "./utils/dbConnection";
 import env from "dotenv";
 import { Server } from "socket.io";

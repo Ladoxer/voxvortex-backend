@@ -11,6 +11,7 @@ interface IBlogContoller {
   getAllBlogs(req: Request, res: Response, next: NextFunction): Promise<any>;
   addComment(req: Request, res: Response, next: NextFunction): Promise<void>;
   getComments(req: Request, res: Response, next: NextFunction): Promise<void>;
+  getFollowingBlogs(req: Request, res: Response, next: NextFunction): Promise<void>;
 }
 
 export default class BlogController implements IBlogContoller {
@@ -108,7 +109,25 @@ export default class BlogController implements IBlogContoller {
 
   async getAllBlogs(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const blogs = await this.blogService.getAllBlogs();
+      const {limit, offset} = req.query;
+      const parsedLimit = limit ? parseInt(limit as string, 10): 3;
+      const parsedOffset = offset ? parseInt(offset as string, 10) : 0;
+
+      const blogs = await this.blogService.getAllBlogs(parsedLimit,parsedOffset);
+      res.status(200).json(blogs);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getFollowingBlogs(req: Request, res: Response, next: NextFunction): Promise<void>{
+    try {
+      const userId = req.params.id;
+      const {limit, offset} = req.query;
+      const parsedLimit = limit ? parseInt(limit as string, 10): 3;
+      const parsedOffset = offset ? parseInt(offset as string, 10) : 0;
+
+      const blogs = await this.blogService.getFollowingBlogs(userId,parsedLimit,parsedOffset);
       res.status(200).json(blogs);
     } catch (error) {
       next(error);

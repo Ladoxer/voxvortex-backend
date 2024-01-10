@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import UserService from "../services/userService";
+import { IUser } from "../models/User";
 
 export default class UserController {
   private userService: UserService;
@@ -26,6 +27,22 @@ export default class UserController {
       next(error); 
     }
   }
+
+  async updateUser(req: Request, res: Response, next: NextFunction) {
+    try {
+      const userId = req.params.id;
+      const updatedUserData: Partial<IUser> = req.body;
+      const updatedData = await this.userService.updateUser(userId,updatedUserData);
+
+      if(updatedData){
+        res.status(200).json("updated successfully.");
+      }else{
+        res.status(404).json("user data not found.");
+      }
+    } catch (error) {
+      next(error);
+    }
+  }  
 
   async blockUser(req: Request, res: Response, next: NextFunction) {
     try {
@@ -88,6 +105,25 @@ export default class UserController {
     }
   }
 
+  async toggleLike(req: Request, res: Response, next: NextFunction) {
+    try {
+      const {userId, blogId} = req.body;
+      const isLiked = await this.userService.toggleLike(userId,blogId);
+
+      if(isLiked){
+        return res.status(200).json({
+          message: 'Liked'
+        })
+      } else {
+        return res.status(200).json({
+          message: 'Unliked'
+        })
+      }
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async getFollowings(req: Request, res: Response, next: NextFunction){
     try {
       const userId = req.params.id;
@@ -100,6 +136,17 @@ export default class UserController {
     }
   }
 
+  async getFollowers(req: Request, res: Response, next: NextFunction){
+    try {
+      const userId = req.params.id;
+      const followers = await this.userService.getFollowers(userId);
+
+      res.status(200).json(followers);
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async getSavedBlogs(req: Request, res: Response, next: NextFunction){
     try {
       const userId = req.params.id;
@@ -107,6 +154,28 @@ export default class UserController {
 
       res.status(200).json(savedBlogs);
       
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getMyBlogs(req: Request, res: Response, next: NextFunction){
+    try {
+      const userId = req.params.id;
+      const myBlogs = await this.userService.getMyBlogs(userId);
+
+      res.status(200).json(myBlogs);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getLikedBlogs(req: Request, res: Response, next: NextFunction){
+    try {
+      const userId = req.params.id;
+      const likedBlogs = await this.userService.getLikedBlogs(userId);
+
+      res.status(200).json(likedBlogs);
     } catch (error) {
       next(error);
     }

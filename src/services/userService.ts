@@ -24,6 +24,14 @@ export default class UserService {
     }
   }
 
+  async updateUser(userId: string, updatedUserData: Partial<IUser>): Promise<IUser | null> {
+    try {
+      return await this.userRepository.updateUser(userId,updatedUserData);
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async blockUser(userId: string): Promise<void> {
     try {
       await this.userRepository.blockUser(userId);
@@ -56,6 +64,14 @@ export default class UserService {
     }
   }
 
+  async toggleLike(userId: string, blogId: string): Promise<boolean> {
+    try {
+      return await this.userRepository.toggleLike(userId,blogId);
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async getFollowing(userId: string){
     try {
       return await this.userRepository.getFollowings(userId);
@@ -64,9 +80,33 @@ export default class UserService {
     }
   }
 
+  async getFollowers(userId: string){
+    try {
+      return await this.userRepository.getFollwers(userId);
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async getSavedBlogs(userId: string){
     try {
       return await this.userRepository.getSavedBlogs(userId);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getMyBlogs(userId: string){
+    try {
+      return await this.userRepository.getMyBlogs(userId);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getLikedBlogs(userId: string){
+    try {
+      return await this.userRepository.getLikedBlogs(userId);
     } catch (error) {
       throw error;
     }
