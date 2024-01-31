@@ -57,6 +57,7 @@ export class SubscriptionService implements ISubscriptionService{
       if(generatedSignature === razorpay_signature) {
         
         await this.userRepository.updatePremium(userId,true);
+        await this.subscriptionRepository.updateSubscription(razorpay_subscription_id,true);
         return {success: true, message: 'Payment verification successful'}
       } else {
         return {success: false, message: 'Invalid payment signature'}
@@ -78,6 +79,7 @@ export class SubscriptionService implements ISubscriptionService{
         const sub: ISubscription | null = await this.subscriptionRepository.cancelSubscription(subscription_Id);
         if(sub){
           await this.userRepository.updatePremium(sub.userId,false);
+          await this.subscriptionRepository.updateSubscription(subscription_Id,false);
         }
 
         return {success: true, message: 'Subscription cancelled successfully..'};

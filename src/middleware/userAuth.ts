@@ -14,6 +14,9 @@ export const userAuth = async (req: Request, res: Response, next: NextFunction) 
     if(token) {
       const decoded = jwtVerify(token.slice(7), process.env.JWT_SECRET as string) as JwtPayload;
 
+      console.log('decoded',decoded);
+      
+
       const userData = await userService.getUserById(decoded._id);
 
       if(userData !== null){

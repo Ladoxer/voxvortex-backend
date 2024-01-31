@@ -17,9 +17,13 @@ export const adminAuth = async (req: Request, res: Response, next: NextFunction)
       const userData = await userService.getUserById(decoded._id);
 
       if(userData !== null){
+        console.log(userData);
+        
         if(userData.is_admin){
           next();
         }else{
+          console.log('first forbid');
+          
           res.status(FORBIDDEN).json({message:'You are not an admin'});
         }
       }else{

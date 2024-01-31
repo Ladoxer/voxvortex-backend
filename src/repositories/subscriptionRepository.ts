@@ -87,8 +87,18 @@ export default class SubscriptionRepository implements ISubscriptionRepository {
 
   async getUserSubscription(userId: string): Promise<any>{
     try {
-      const sub = await Subscription.findOne({userId});
+      const sub = await Subscription.findOne({userId,status:true});
+      console.log(sub);
+      
       return sub;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updateSubscription(subscription_Id: string,value: boolean): Promise<void>{
+    try {
+      await Subscription.findOneAndUpdate({subscriptionId:subscription_Id},{$set:{status:value}});
     } catch (error) {
       throw error;
     }

@@ -23,7 +23,7 @@ const io = new Server(server, {
 });
 
 io.on("connection", (socket) => {
-  // console.log("What is socket: ",socket);
+  // console.log("What is socket: ");
   socket.on("join_room", (room) => {
     socket.join(room);
     console.log("Room joined:", room);
