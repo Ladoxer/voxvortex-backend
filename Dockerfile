@@ -2,11 +2,13 @@ FROM node:18-alpine
 
 WORKDIR /app
 
+COPY package*.json ./
+
+RUN npm install -g typescript
+
+RUN npm ci
+
 COPY . .
-
-RUN npm install typescript -g
-
-RUN npm install
 
 RUN tsc
 
