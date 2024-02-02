@@ -8,9 +8,11 @@ import labelRouter from "./routes/labelRoutes";
 import chatRouter from "./routes/chatRoutes";
 import subscriptionRouter from "./routes/subscriptionRoutes";
 import planRouter from "./routes/planRoutes";
+import env from "dotenv";
+env.config();
 
 const app = express();
-app.use(cors({credentials: true, origin: 'http://localhost:4200'}));
+app.use(cors({credentials: true, origin: process.env.FRONTEND_URL as string}));
 app.use(cookieParser());
 app.use(express.json());
 app.use('/api/users', userRoutes);
