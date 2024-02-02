@@ -17,7 +17,7 @@ const server = app.listen(PORT, () => {
 // socket io
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:4200"],
+    origin: [process.env.FRONTEND_URL as string],
     methods: ["GET", "POST"],
   },
 });
