@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import BlogService from "../services/blogService";
 import { IBlog } from "../models/Blog";
+import cloudinary from "../utils/cloudinary";
 
 interface IBlogContoller {
   createBlog(req: Request, res: Response, next: NextFunction): Promise<any>;
@@ -27,10 +28,16 @@ export default class BlogController implements IBlogContoller {
     next: NextFunction
   ): Promise<any> {
     try {
+      // console.log(req.body);
+      // console.log(req.file);
+      
       const { userName, title, content, label } = req.body;
-      const imageUrl = req.file?.filename;
+      const image = req.file?.path;
+      const imageUrl = await cloudinary.uploader.upload(image as string, {
+        folder: "Image",
+      })
 
-      const data = await this.blogService.createBlog({ userName, title, content, image: imageUrl, label });
+      const data = await this.blogService.createBlog({ userName, title, content, image: imageUrl.secure_url, label });
       if(data){
         await this.blogService.updateUserBlog(userName,data._id);
         return res.status(201).json({
@@ -41,6 +48,7 @@ export default class BlogController implements IBlogContoller {
         message:"Failed to save"
       });
     } catch (error) {
+      console.error(error);
       next(error);
     }
   }
