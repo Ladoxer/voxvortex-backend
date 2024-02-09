@@ -1,11 +1,11 @@
 import { PopulatedDoc } from "mongoose";
-import User, {IUser} from "../models/User";
+import User, { IUser } from "../models/User";
 import Blog, { IBlog } from "../models/Blog";
 
 export default class UserRepository {
   async getAllUsers(): Promise<IUser[]> {
     try {
-      const users = await User.find({is_admin:false}).exec();
+      const users = await User.find({ is_admin: false }).exec();
       return users;
     } catch (error) {
       throw error;
@@ -20,9 +20,14 @@ export default class UserRepository {
     }
   }
 
-  async updateUser(userId: string, updatedUserData: Partial<IUser>): Promise<IUser | null> {
+  async updateUser(
+    userId: string,
+    updatedUserData: Partial<IUser>
+  ): Promise<IUser | null> {
     try {
-      const userData = await User.findByIdAndUpdate(userId, updatedUserData, {new: true}).exec();
+      const userData = await User.findByIdAndUpdate(userId, updatedUserData, {
+        new: true,
+      }).exec();
 
       return userData;
     } catch (error) {
@@ -32,7 +37,10 @@ export default class UserRepository {
 
   async blockUser(userId: string): Promise<void> {
     try {
-      await User.updateOne({_id: userId},{$set:{is_blocked:true}}).exec();
+      await User.updateOne(
+        { _id: userId },
+        { $set: { is_blocked: true } }
+      ).exec();
     } catch (error) {
       throw error;
     }
@@ -40,7 +48,10 @@ export default class UserRepository {
 
   async unblockUser(userId: string): Promise<void> {
     try {
-      await User.updateOne({_id: userId},{$set:{is_blocked:false}}).exec();
+      await User.updateOne(
+        { _id: userId },
+        { $set: { is_blocked: false } }
+      ).exec();
     } catch (error) {
       throw error;
     }
@@ -51,59 +62,83 @@ export default class UserRepository {
       const user = await User.findById(userId).exec();
       const targetUser = await User.findById(targetId).exec();
 
-      if(!user || !targetUser) {
+      if (!user || !targetUser) {
         throw new Error("User or targert user not found");
       }
 
       const isFollowing = user.following.includes(targetUser._id);
 
-      if(isFollowing) {    
+      if (isFollowing) {
         await User.updateOne(
-          {_id: userId},
-          {$pull:{following:targetId}}
+          { _id: userId },
+          { $pull: { following: targetId } }
         ).exec();
         await User.updateOne(
-          {_id:targetId},
-          {$pull:{followers: userId}}
+          { _id: targetId },
+          { $pull: { followers: userId } }
         ).exec();
       } else {
         await User.updateOne(
-          {_id: userId},
-          {$addToSet: {following: targetId}}
+          { _id: userId },
+          { $addToSet: { following: targetId } }
         ).exec();
         await User.updateOne(
-          {_id:targetId},
-          {$addToSet:{followers:userId}}
+          { _id: targetId },
+          { $addToSet: { followers: userId } }
         ).exec();
       }
 
       return !isFollowing;
-
     } catch (error) {
       throw error;
     }
   }
 
+  // async toggleSave(userId: string, blogId: string): Promise<boolean> {
+  //   try {
+  //     const user = await User.findById(userId).exec();
+  //     const blog = await Blog.findById(blogId).exec();
+  //     const blogExists = user?.saved.includes(blog?._id);
+
+  //     if (!user || !blog) {
+  //       throw new Error("User or blog not found");
+  //     }
+
+  //     if(blogExists) {
+  //       await User.updateOne(
+  //         {_id: userId},
+  //         {$pull: {saved:blogId}}
+  //       ).exec();
+  //     } else {
+  //       await User.updateOne(
+  //         {_id: userId},
+  //         {$addToSet: {saved: blogId}}
+  //       ).exec();
+  //     }
+
+  //     return !blogExists;
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
   async toggleSave(userId: string, blogId: string): Promise<boolean> {
     try {
+      console.log('started');
       const user = await User.findById(userId).exec();
       const blog = await Blog.findById(blogId).exec();
       const blogExists = user?.saved.includes(blog?._id);
 
-      if (!user || !blog) {
-        throw new Error("User or blog not found");
-      }
+      console.log(blogExists);
+      
 
-      if(blogExists) {
-        await User.updateOne(
-          {_id: userId},
-          {$pull: {saved:blogId}}
-        ).exec();
-      } else {
-        await User.updateOne(
-          {_id: userId},
-          {$addToSet: {saved: blogId}}
-        ).exec();
+      const updatedUser = await User.findByIdAndUpdate(
+        userId,
+        { [blogExists ? "$pull" : "$addToSet"]: { saved: blogId } },
+        { new: true, upsert: true }
+      ).exec();
+
+      if (!updatedUser) {
+        throw new Error("User not found");
       }
 
       return !blogExists;
@@ -118,28 +153,22 @@ export default class UserRepository {
       const blog = await Blog.findById(blogId).exec();
       const blogExists = user?.liked.includes(blog?._id);
 
-      if(!user || !blog) {
+      if (!user || !blog) {
         throw new Error("User or blog not found");
       }
 
       if (blogExists) {
         await User.updateOne(
-          {_id: userId},
-          {$pull: {liked: blogId}}
+          { _id: userId },
+          { $pull: { liked: blogId } }
         ).exec();
-        await Blog.updateOne(
-          {_id: blogId},
-          {$inc:{like: -1}}
-        ).exec();
+        await Blog.updateOne({ _id: blogId }, { $inc: { like: -1 } }).exec();
       } else {
         await User.updateOne(
-          {_id: userId},
-          {$addToSet: {liked: blogId}}
+          { _id: userId },
+          { $addToSet: { liked: blogId } }
         ).exec();
-        await Blog.updateOne(
-          {_id: blogId},
-          {$inc:{like: 1}}
-        ).exec();
+        await Blog.updateOne({ _id: blogId }, { $inc: { like: 1 } }).exec();
       }
 
       return !blogExists;
@@ -148,19 +177,23 @@ export default class UserRepository {
     }
   }
 
-  async getFollowings(userId: string){
+  async getFollowings(userId: string) {
     try {
-      const user = await User.findById(userId).populate("following", "name").exec();
-      
+      const user = await User.findById(userId)
+        .populate("following", "name")
+        .exec();
+
       return user?.following as PopulatedDoc<IUser>[];
     } catch (error) {
       throw error;
     }
   }
 
-  async getFollwers(userId: string){
+  async getFollwers(userId: string) {
     try {
-      const user = await User.findById(userId).populate("followers","name").exec();
+      const user = await User.findById(userId)
+        .populate("followers", "name")
+        .exec();
 
       return user?.followers as PopulatedDoc<IUser>[];
     } catch (error) {
@@ -168,15 +201,17 @@ export default class UserRepository {
     }
   }
 
-  async getSavedBlogs(userId: string){
+  async getSavedBlogs(userId: string) {
     try {
-      const user = await User.findById(userId).populate({
-        path: 'saved',
-        populate: {
-          path: 'userName label',
-          select: 'name label'
-        }
-      }).exec();
+      const user = await User.findById(userId)
+        .populate({
+          path: "saved",
+          populate: {
+            path: "userName label",
+            select: "name label",
+          },
+        })
+        .exec();
 
       return user?.saved as PopulatedDoc<IBlog>[];
     } catch (error) {
@@ -184,15 +219,17 @@ export default class UserRepository {
     }
   }
 
-  async getMyBlogs(userId: string){
+  async getMyBlogs(userId: string) {
     try {
-      const user = await User.findById(userId).populate({
-        path: 'blogs',
-        populate: {
-          path: 'userName label',
-          select: 'name label',
-        },
-      }).exec();
+      const user = await User.findById(userId)
+        .populate({
+          path: "blogs",
+          populate: {
+            path: "userName label",
+            select: "name label",
+          },
+        })
+        .exec();
 
       return user?.blogs as PopulatedDoc<IBlog>[];
     } catch (error) {
@@ -200,7 +237,7 @@ export default class UserRepository {
     }
   }
 
-  async getLikedBlogs(userId: string){
+  async getLikedBlogs(userId: string) {
     try {
       const user = await User.findById(userId);
 
@@ -210,23 +247,28 @@ export default class UserRepository {
     }
   }
 
-  async updatePremium(userId:string,value: boolean){
+  async updatePremium(userId: string, value: boolean) {
     try {
-      await User.findOneAndUpdate({_id:userId},{$set:{is_premium: value}});
+      await User.findOneAndUpdate(
+        { _id: userId },
+        { $set: { is_premium: value } }
+      );
     } catch (error) {
       throw error;
     }
   }
 
-  async getPremiumAndNormalUsers(): Promise<{premiumUsers: number, normalUsers: number}>{
+  async getPremiumAndNormalUsers(): Promise<{
+    premiumUsers: number;
+    normalUsers: number;
+  }> {
     try {
-      const nPremium = await User.find({is_premium:true,is_admin:false});
-      const nNormal = await User.find({is_premium:false, is_admin:false});
+      const nPremium = await User.find({ is_premium: true, is_admin: false });
+      const nNormal = await User.find({ is_premium: false, is_admin: false });
 
-      return {premiumUsers:nPremium.length, normalUsers: nNormal.length};
+      return { premiumUsers: nPremium.length, normalUsers: nNormal.length };
     } catch (error) {
       throw error;
     }
   }
-
 }
