@@ -19,5 +19,7 @@ userRouter.get('/save/:id',userAuth,userController.getSavedBlogs.bind(userContro
 userRouter.put('/like', userAuth,userController.toggleLike.bind(userController));
 userRouter.get('like/:id',userAuth,userController.getLikedBlogs.bind(userController));
 userRouter.get('/myBlogs/:id', userAuth,userController.getMyBlogs.bind(userController));
+userRouter.get('/dashboard/totalUsers', userController.getTotalUsers.bind(userController));
+userRouter.get('/dashboard/premiumAndNormalUsers', userController.getPremiumAndNormalUsers.bind(userController));
 
 export default userRouter;

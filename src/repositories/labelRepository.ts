@@ -1,4 +1,5 @@
 import Label,{ ILabel } from "../models/Label";
+import Blog from "../models/Blog";
 
 interface ILabelRepository {
   createLabel(newLabel: ILabel): Promise<ILabel | null>;
@@ -6,6 +7,8 @@ interface ILabelRepository {
   getAllLabels(): Promise<ILabel[]>;
   updateLabel(labelId: string, updatedLabel: Partial<ILabel>): Promise<ILabel | null>;
   deleteLabel(labelId: string): Promise<boolean>;
+  getTotalLabel(): Promise<number>;
+  getTopLabels(): Promise<{label: string; count: number}[]>;
 }
 
 export default class LabelRepository implements ILabelRepository {
@@ -48,6 +51,32 @@ export default class LabelRepository implements ILabelRepository {
       return !!result;
     } catch (error) {
       return false;
+    }
+  }
+
+  async getTotalLabel(): Promise<number> {
+    try {
+      const nLabel = await Label.find().exec();
+      return nLabel.length;
+    } catch (error) {
+      throw error;
+    }  
+  }
+
+  async getTopLabels(): Promise<{ label: string; count: number; }[]> {
+    try {
+      const topLabels = await Blog.aggregate([
+        {$group: {_id: "$label", count: {$sum: 1}}},
+        {$sort: {count: -1}},
+        {$limit: 5},
+        {$lookup: {from: "labels", localField:"_id", foreignField: "_id", as: "label"}},
+        {$unwind: "$label"},
+        {$project: {_id: 0, label: "$label.label", count: 1}}
+      ]).exec();
+
+      return topLabels;
+    } catch (error) {
+      throw error;
     }
   }
 

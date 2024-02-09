@@ -180,4 +180,22 @@ export default class UserController {
       next(error);
     }
   }
+
+  async getTotalUsers(req: Request, res: Response, next: NextFunction){
+    try {
+      const nUsers = await this.userService.getTotalUsers();
+      res.status(200).json(nUsers);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getPremiumAndNormalUsers(req: Request, res: Response, next: NextFunction){
+    try {
+      const result = await this.userService.getPremiumAndNormalUsers();
+      res.status(200).json(result);
+    } catch (error) {
+      next(error);
+    }
+  }
 }

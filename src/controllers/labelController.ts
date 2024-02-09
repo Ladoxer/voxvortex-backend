@@ -10,6 +10,8 @@ interface ILabelController {
   getAllLabels(req: Request, res: Response, next: NextFunction): Promise<void>;
   updateLabel(req: Request, res: Response, next: NextFunction): Promise<void>;
   deleteLabel(req: Request, res: Response, next: NextFunction): Promise<void>;
+  getTotalLabel(req: Request, res: Response, next: NextFunction): Promise<void>;
+  getTopLabels(req: Request, res: Response, next: NextFunction): Promise<void>;
 }
 
 export default class LabelController implements ILabelController {
@@ -89,6 +91,26 @@ export default class LabelController implements ILabelController {
         });
       }
 
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getTotalLabel(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const nLabel = await this.labelService.getTotalLAbel();
+
+      res.status(200).json(nLabel);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getTopLabels(req: Request, res: Response, next: NextFunction): Promise<void>{
+    try {
+      const result = await this.labelService.getTopLabels();
+
+      res.status(200).json(result);
     } catch (error) {
       next(error);
     }

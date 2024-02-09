@@ -111,4 +111,20 @@ export default class UserService {
       throw error;
     }
   }
+
+  async getTotalUsers(): Promise<number> {
+    try {
+      const users = await this.userRepository.getAllUsers();
+
+      return users.length;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getPremiumAndNormalUsers(): Promise<{premiumUsers: number, normalUsers: number}>{
+    const result = await this.userRepository.getPremiumAndNormalUsers();
+
+    return result;
+  }
 }

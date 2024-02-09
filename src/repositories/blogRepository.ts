@@ -9,6 +9,7 @@ interface IBlogRepository {
   deleteBlog(blogId: string): Promise<boolean>;
   getAllBlogs(limit: number, offset: number): Promise<IBlog[]>;
   updateUserBlog(userId: string, blogId: string): Promise<void>;
+  getTotalBlogs(): Promise<number>;
   addComment(
     blogId: string,
     newComment: { userName: string; text: string; createdAt: Date }
@@ -140,6 +141,15 @@ export default class BlogRepository implements IBlogRepository {
         .exec();
 
       return followingBlogs;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getTotalBlogs(): Promise<number> {
+    try {
+      const blogs = await Blog.find().exec();
+      return blogs.length;
     } catch (error) {
       throw error;
     }

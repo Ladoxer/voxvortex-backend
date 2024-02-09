@@ -12,6 +12,7 @@ interface IBlogService {
   addComment(blogId: string, newComment: {userName: string, text: string, createdAt: Date}): Promise<void>;
   getComments(blogId: string): Promise<any>;
   getFollowingBlogs(userId: string, limit: number, offset: number): Promise<IBlog[] | null>;
+  getTotalBlogs(): Promise<number>;
 }
 
 export default class BlogService implements IBlogService {
@@ -69,6 +70,10 @@ export default class BlogService implements IBlogService {
 
   async getComments(blogId: string): Promise<any> {
     return await this.blogRepository.getComments(blogId);
+  }
+
+  async getTotalBlogs(): Promise<number> {
+    return await this.blogRepository.getTotalBlogs();  
   }
 
 }

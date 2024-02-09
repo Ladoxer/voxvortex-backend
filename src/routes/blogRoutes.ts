@@ -14,5 +14,6 @@ blogRouter.get('/',blogController.getAllBlogs.bind(blogController));
 blogRouter.post('/comment/:id',blogController.addComment.bind(blogController));
 blogRouter.get('/comment/:id',blogController.getComments.bind(blogController));
 blogRouter.get('/following/:id',blogController.getFollowingBlogs.bind(blogController));
+blogRouter.get('/dashboard/get/totalBlogs', blogController.getTotalBlogs.bind(blogController));
 
 export default blogRouter;

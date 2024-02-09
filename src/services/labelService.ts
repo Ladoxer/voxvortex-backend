@@ -7,6 +7,8 @@ interface ILabelService {
   getAllLabels(): Promise<ILabel[]>;
   updateLabel(labelId: string, updatedLabel: Partial<ILabel>): Promise<ILabel | null>;
   deleteLabel(labelId: string): Promise<boolean>;
+  getTotalLAbel(): Promise<number>;
+  getTopLabels(): Promise<{ label: string; count: number; }[]>;
 }
 
 export default class LabelService implements ILabelService {
@@ -34,5 +36,13 @@ export default class LabelService implements ILabelService {
 
   async deleteLabel(labelId: string): Promise<boolean> {
     return await this.labelRepository.deleteLabel(labelId);
+  }
+
+  async getTotalLAbel(): Promise<number> {
+    return await this.labelRepository.getTotalLabel();  
+  }
+
+  async getTopLabels(): Promise<{ label: string; count: number; }[]>{
+    return await this.labelRepository.getTopLabels();
   }
 }

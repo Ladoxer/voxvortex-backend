@@ -13,6 +13,7 @@ interface IBlogContoller {
   addComment(req: Request, res: Response, next: NextFunction): Promise<void>;
   getComments(req: Request, res: Response, next: NextFunction): Promise<void>;
   getFollowingBlogs(req: Request, res: Response, next: NextFunction): Promise<void>;
+  getTotalBlogs(req: Request, res: Response, next: NextFunction): Promise<void>;
 }
 
 export default class BlogController implements IBlogContoller {
@@ -161,6 +162,15 @@ export default class BlogController implements IBlogContoller {
       const blogId = req.params.id;
       const comments = await this.blogService.getComments(blogId);
       res.status(200).json(comments);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getTotalBlogs(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const nBlog = await this.blogService.getTotalBlogs();
+      res.status(200).json(nBlog);
     } catch (error) {
       next(error);
     }

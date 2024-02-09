@@ -218,4 +218,15 @@ export default class UserRepository {
     }
   }
 
+  async getPremiumAndNormalUsers(): Promise<{premiumUsers: number, normalUsers: number}>{
+    try {
+      const nPremium = await User.find({is_premium:true,is_admin:false});
+      const nNormal = await User.find({is_premium:false, is_admin:false});
+
+      return {premiumUsers:nPremium.length, normalUsers: nNormal.length};
+    } catch (error) {
+      throw error;
+    }
+  }
+
 }
