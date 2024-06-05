@@ -11,6 +11,9 @@ import planRouter from "./routes/planRoutes";
 import env from "dotenv";
 env.config();
 
+import { job } from "./config/job";
+job.start();
+
 const app = express();
 app.use(cors({credentials: true, origin: process.env.FRONTEND_URL as string}));
 app.use(cookieParser());
